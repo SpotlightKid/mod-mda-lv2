@@ -40,11 +40,11 @@ mdaEPiano::mdaEPiano(audioMasterCallback audioMaster) : AudioEffectX(audioMaster
   {
     //fill patches...
     int32_t i=0;
-    fillpatch(i++, "Default", 0.500f, 0.500f, 0.500f, 0.500f, 0.500f, 0.650f, 0.250f, 0.500f, 1.0f, 0.500f, 0.146f, 0.000f);
-    fillpatch(i++, "Bright", 0.500f, 0.500f, 1.000f, 0.800f, 0.500f, 0.650f, 0.250f, 0.500f, 1.0f, 0.500f, 0.146f, 0.500f);
-    fillpatch(i++, "Mellow", 0.500f, 0.500f, 0.000f, 0.000f, 0.500f, 0.650f, 0.250f, 0.500f, 1.0f, 0.500f, 0.246f, 0.000f);
-    fillpatch(i++, "Autopan", 0.500f, 0.500f, 0.500f, 0.500f, 0.250f, 0.650f, 0.250f, 0.500f, 1.0f, 0.500f, 0.246f, 0.000f);
-    fillpatch(i++, "Tremolo", 0.500f, 0.500f, 0.500f, 0.500f, 0.750f, 0.650f, 0.250f, 0.500f, 1.0f, 0.500f, 0.246f, 0.000f);
+    fillpatch(i++, "Default", 0.500f, 0.500f, 0.500f, 0.500f, 0.500f, 0.650f, 0.250f, 0.500f, 0.500f, 0.500f, 0.146f, 0.000f);
+    fillpatch(i++, "Bright", 0.500f, 0.500f, 1.000f, 0.800f, 0.500f, 0.650f, 0.250f, 0.500f, 0.500f, 0.500f, 0.146f, 0.500f);
+    fillpatch(i++, "Mellow", 0.500f, 0.500f, 0.000f, 0.000f, 0.500f, 0.650f, 0.250f, 0.500f, 0.500f, 0.500f, 0.246f, 0.000f);
+    fillpatch(i++, "Autopan", 0.500f, 0.500f, 0.500f, 0.500f, 0.250f, 0.650f, 0.250f, 0.500f, 0.500f, 0.500f, 0.246f, 0.000f);
+    fillpatch(i++, "Tremolo", 0.500f, 0.500f, 0.500f, 0.500f, 0.750f, 0.650f, 0.250f, 0.500f, 0.500f, 0.500f, 0.246f, 0.000f);
     setProgram(0);
   }
 
@@ -127,7 +127,7 @@ mdaEPiano::mdaEPiano(audioMasterCallback audioMaster) : AudioEffectX(audioMaster
 
   //initialise...
   memset(voice, 0, sizeof(voice));
-  for(int32_t v=0; v<NVOICES; v++) 
+  for(int32_t v=0; v<NVOICES; v++)
   {
     voice[v].env = 0.0f;
     voice[v].dec = 0.99f; //all notes off
@@ -163,7 +163,7 @@ void mdaEPiano::update()  //parameter change
   if(param[6] < 0.25f) velsens -= 0.75f - 3.0f * param[6];
 
   width = 0.03f * param[7];
-  poly = 1 + (int32_t)(31.0f * param[8]);
+  poly = 1 + (int32_t)(31.9f * param[8]);
   fine = param[9] - 0.5f;
   random = 0.077f * param[10];
   stretch = 0.0f; //0.000434f * (param[11] - 0.5f); parameter re-used for overdrive!
@@ -290,7 +290,7 @@ void mdaEPiano::getParameterName(int32_t index, char *label)
 
     case  6: strcpy(label, "Velocity Sense"); break;
     case  7: strcpy(label, "Stereo Width"); break;
-    case  8: strcpy(label, "Polyphonic"); break;
+    case  8: strcpy(label, "Polyphony"); break;
 
     case  9: strcpy(label, "Fine Tuning"); break;
 		case 10: strcpy(label, "Random Tuning"); break;
@@ -408,7 +408,7 @@ void mdaEPiano::processReplacing(float **inputs, float **outputs, int32_t sample
 
     if(frame<sampleFrames)
     {
-      if(activevoices == 0 && programs[curProgram].param[4] > 0.5f) 
+      if(activevoices == 0 && programs[curProgram].param[4] > 0.5f)
         { lfo0 = -0.7071f;  lfo1 = 0.7071f; } //reset LFO phase - good idea?
 
       if (!end) {
@@ -541,7 +541,7 @@ int32_t mdaEPiano::processEvent(const LV2_Atom_Event* ev)
             sustain = midiData[2] & 0x40;
             if(sustain==0)
             {
-              noteOn(SUSTAIN, 0); //end all sustained notes  
+              noteOn(SUSTAIN, 0); //end all sustained notes
             }
             break;
 

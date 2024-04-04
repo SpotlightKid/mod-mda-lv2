@@ -49,7 +49,7 @@
 // para valores de 0 a 1, pois o código do mda foi projetado para trabalhar com esses valores
 
 
-float translateParameter(PLUGIN_CLASS* effect,int port,float value,bool inverted) {    
+float translateParameter(PLUGIN_CLASS* effect,int port,float value,bool inverted) {
     if(strcmp(effect->getUniqueID(), "mdaAmb") == 0) {
         switch(port) {
             case 0:
@@ -224,17 +224,17 @@ float translateParameter(PLUGIN_CLASS* effect,int port,float value,bool inverted
         }
     }
     else if(strcmp(effect->getUniqueID(), "mdaDX10") == 0) {
-        /* 
-        Scaling process is convoluted but here is an explanation, 
+        /*
+        Scaling process is convoluted but here is an explanation,
         but just plugging through a bunch of values would make the presets not work:
-        
+
         All envelope time based parameters are implemented as a recursive equation within the synth.
         This means that at each sample it calculated something along the lines of: env_volume = env_volume * 0.999...
         Here the 0.999... parameter is a decayparameter which will be explained later, for now let's call it dec.
         The volume over time can then be found as: amp = dec^[n_samples].
         Thus the decay time can be found when subsituting a "silence ratio" for amp, in this case -60db -> 0.001.
-        This gives n_samples = log_{dec}(amp) or in c++ terms: log(0.001)/log(dec). (as log_a(b) = log(b)/log(a)) 
-        
+        This gives n_samples = log_{dec}(amp) or in c++ terms: log(0.001)/log(dec). (as log_a(b) = log(b)/log(a))
+
         Now the host provides the value as a linear interpolation from min to max, no matter if you specify it as logarithmic.
         F.Y.I. the scaling they use for logarithmic is min*e^(x * ln(max/min)) where x = [0,1].
         The different time parameters have different equations for how they calculate the parameters:
@@ -245,7 +245,7 @@ float translateParameter(PLUGIN_CLASS* effect,int port,float value,bool inverted
         - Modulator Release = exp( -(1/samplerate) * exp(5-8x) )
         However these map exactly to the way the logarithmic parameter mapping in the host works.
         Given that the output needs to be scaled the same way we can solve the equation for x given a value between min and max:
-        value = min*e^(x * ln(max/min)) -> x = ln(value/min)/ln(max/min). 
+        value = min*e^(x * ln(max/min)) -> x = ln(value/min)/ln(max/min).
         Put this value in the equation and it should return the correct value for x for the time parameter.
         However some parameters have insanely long times so there is some additional stretching going on for the last ten percent of the range.
         */
@@ -254,8 +254,8 @@ float translateParameter(PLUGIN_CLASS* effect,int port,float value,bool inverted
             return inverted ? 2.5*expf(value * logf(4000.f/2.5)) : logf(value/2.5)/logf(4000.f/2.5);
             //return inverted ? value*100 : value/(100);
             case(1):
-            /* 
-            carrier decay times range from ~45ms to ~135 seconds 
+            /*
+            carrier decay times range from ~45ms to ~135 seconds
             so in order to make it useful some stretching is applied to the value input for 6s to 7s to make it stretch
             stretching should happen from 6000ms to 7000ms value input
             log(6000/46.5)/log(7000/46.5) = ~0.97
@@ -412,7 +412,7 @@ float translateParameter(PLUGIN_CLASS* effect,int port,float value,bool inverted
             case(7):
             return inverted ? value*200 : value/(200);
             case(8):
-            return value;
+            return inverted ? 1 + (int32_t)(31.9f * value) : (value - 1) / 31.9f;
             case(9):
             return inverted ? value*100 - 50 : (value + 50)/(100);
             case(10):
@@ -545,7 +545,7 @@ float translateParameter(PLUGIN_CLASS* effect,int port,float value,bool inverted
             case(7):
             return inverted ? value*200 : value/(200);
             case(8):
-            return inverted ? value : value;
+            return inverted ? 8 + (int32_t)(24.9f * value) : (value - 8) / 24.9f;
             case(9):
             return inverted ? value*100-50 : (value + 50)/(100);
             case(10):

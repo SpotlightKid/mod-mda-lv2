@@ -38,8 +38,8 @@
 		pset:value 100 ;
 	] ;
 	lv2:port [
-		lv2:symbol "polyphonic" ;
-		pset:value 1 ;
+		lv2:symbol "polyphony" ;
+		pset:value 16 ;
 	] ;
 	lv2:port [
 		lv2:symbol "fine_tuning" ;
